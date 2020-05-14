@@ -1,0 +1,70 @@
+
+.nav-ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 10;
+  overflow: hidden;
+  background-color: #333;
+}
+
+.nav-li {
+  float: right;
+  padding-left: 20px;
+}
+
+.nav-li button {
+  display: block;
+  color: rgb(133, 111, 111);
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.nav-li button:hover {
+  background-color: rgb(110, 105, 105);
+  color: white;
+}
+
+
+.table {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 80%;
+  padding: 10%;
+  margin-left: 10%;
+}
+
+.table td, .table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.table tr:nth-child(even){background-color: #f2f2f2;}
+
+.table tr:hover {background-color: #ddd;}
+
+.table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+
+
+.chart {
+  display: inline-block;
+  padding: 20px;
+  width: 500px;
+  height: 300px;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.title {
+  text-align: center;
+}
+
+/*# sourceMappingURL=/client.62456f60.css.map */
