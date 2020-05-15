@@ -40981,7 +40981,48 @@ function (_Component) {
 exports.Connect = Connect;
 var _default = Connect;
 exports.default = _default;
-},{"react":"../node_modules/react/index.js"}],"../node_modules/recharts/node_modules/core-js/internals/global.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js"}],"components/Exchange.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Exchange;
+
+var _socket = _interopRequireDefault(require("socket.io-client"));
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _reactDom = _interopRequireDefault(require("react-dom"));
+
+function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function Exchange(props) {
+  var exchange = props.exchange;
+  var totalVolume = 1;
+  var keys = Object.keys(exchange);
+  var i = 0;
+
+  for (i = 0; i < keys.length; i++) {
+    totalVolume = exchange[keys[i]].buyVolume + exchange[keys[i]].sellVolume + totalVolume;
+  } // 2. render the line chart using the state
+
+
+  return _react.default.createElement("table", {
+    className: "table"
+  }, _react.default.createElement("thead", null, _react.default.createElement("tr", {
+    className: "table"
+  }, _react.default.createElement("th", null, " Exchange "), _react.default.createElement("th", null, " BUY Volume  "), _react.default.createElement("th", null, " SELL Volume "), _react.default.createElement("th", null, " Total Volume "), _react.default.createElement("th", null, " N Stocks "), _react.default.createElement("th", null, " Participation "))), _react.default.createElement("thead", null, Object.keys(exchange).map(function (ticker) {
+    return _react.default.createElement("tr", null, _react.default.createElement("td", null, " ", ticker, " "), _react.default.createElement("td", null, " ", exchange[ticker].buyVolume.toLocaleString(), " "), _react.default.createElement("td", null, " ", exchange[ticker].sellVolume.toLocaleString(), " "), _react.default.createElement("td", null, " ", (exchange[ticker].buyVolume + exchange[ticker].sellVolume).toLocaleString(), " "), _react.default.createElement("td", null, " ", exchange[ticker].nStocks.toLocaleString(), " "), _react.default.createElement("td", null, " ", parseFloat((exchange[ticker].buyVolume + exchange[ticker].sellVolume) * 100 / totalVolume).toFixed(2) + "%", " "));
+  })));
+}
+
+;
+},{"socket.io-client":"../node_modules/socket.io-client/lib/index.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js"}],"../node_modules/recharts/node_modules/core-js/internals/global.js":[function(require,module,exports) {
 var global = arguments[3];
 var check = function (it) {
   return it && it.Math == Math && it;
@@ -94476,8 +94517,8 @@ function ChartStock(props) {
     dataKey: "tima"
   }), _react.default.createElement(_recharts.YAxis, {
     label: {
-      value: "Hola",
-      angle: 90,
+      value: "Value",
+      angle: -90,
       position: "insideLeft"
     }
   }), _react.default.createElement(_recharts.Tooltip, null), _react.default.createElement(_recharts.Line, {
@@ -94506,6 +94547,8 @@ var _disconnect = _interopRequireDefault(require("./components/disconnect"));
 
 var _connect = _interopRequireDefault(require("./components/connect"));
 
+var _Exchange = _interopRequireDefault(require("./components/Exchange"));
+
 var _ChartStock = _interopRequireDefault(require("./components/ChartStock"));
 
 function _getRequireWildcardCache() { if (typeof WeakMap !== "function") return null; var cache = new WeakMap(); _getRequireWildcardCache = function () { return cache; }; return cache; }
@@ -94514,6 +94557,12 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -94521,12 +94570,6 @@ function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread n
 function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -94544,6 +94587,12 @@ var ruta = "/stocks";
 var socket = (0, _socket.default)(protocolo + servidor, {
   path: ruta
 });
+var exchangeSocket = (0, _socket.default)(protocolo + servidor, {
+  path: ruta
+});
+var stockSocket = (0, _socket.default)(protocolo + servidor, {
+  path: ruta
+});
 
 var App = function App(_ref) {
   _objectDestructuringEmpty(_ref);
@@ -94558,28 +94607,104 @@ var App = function App(_ref) {
       stock = _useState4[0],
       setstock = _useState4[1];
 
-  var _useState5 = (0, _react.useState)(),
+  var _useState5 = (0, _react.useState)(false),
       _useState6 = _slicedToArray(_useState5, 2),
-      disconnect = _useState6[0],
-      setdisconnect = _useState6[1];
+      stockInit = _useState6[0],
+      setStockInit = _useState6[1];
 
-  var _useState7 = (0, _react.useState)(),
+  var _useState7 = (0, _react.useState)(false),
       _useState8 = _slicedToArray(_useState7, 2),
-      connect = _useState8[0],
-      setconnect = _useState8[1];
+      exchangeInit = _useState8[0],
+      setExchangeInit = _useState8[1];
 
-  var _useState9 = (0, _react.useState)(),
+  var _useState9 = (0, _react.useState)(0),
       _useState10 = _slicedToArray(_useState9, 2),
-      exchange = _useState10[0],
-      setExchange = _useState10[1];
+      newBuy = _useState10[0],
+      setnewBuy = _useState10[1];
 
-  var _useState11 = (0, _react.useState)(0.00001),
+  var _useState11 = (0, _react.useState)(),
       _useState12 = _slicedToArray(_useState11, 2),
-      totalVolume = _useState12[0],
-      setTotalVolume = _useState12[1];
+      disconnect = _useState12[0],
+      setdisconnect = _useState12[1];
+
+  var _useState13 = (0, _react.useState)(),
+      _useState14 = _slicedToArray(_useState13, 2),
+      connect = _useState14[0],
+      setconnect = _useState14[1];
+
+  var _useState15 = (0, _react.useState)({}),
+      _useState16 = _slicedToArray(_useState15, 2),
+      exchange = _useState16[0],
+      setExchange = _useState16[1];
+
+  var _useState17 = (0, _react.useState)({}),
+      _useState18 = _slicedToArray(_useState17, 2),
+      buy = _useState18[0],
+      setBuy = _useState18[1];
+
+  var _useState19 = (0, _react.useState)({}),
+      _useState20 = _slicedToArray(_useState19, 2),
+      sell = _useState20[0],
+      setSell = _useState20[1];
+
+  var _useState21 = (0, _react.useState)(0.00001),
+      _useState22 = _slicedToArray(_useState21, 2),
+      totalVolume = _useState22[0],
+      setTotalVolume = _useState22[1]; //const [nameToTicker, setNameToTicker] = useState({});
+
+
+  var _useState23 = (0, _react.useState)({}),
+      _useState24 = _slicedToArray(_useState23, 2),
+      tickerToExchange = _useState24[0],
+      setTickerToExchange = _useState24[1];
 
   (0, _react.useEffect)(function () {
+    var nameToTicker = {};
+    stockSocket.emit('STOCKS', function () {});
+    stockSocket.on('STOCKS', function (data) {
+      console.log('---------'); // agrego las empresas a StockCompanies  
+
+      for (var i = 0; i < data.length; i++) {
+        setstockCompanies(function (currentData) {
+          return [].concat(_toConsumableArray(currentData), [data[i]]);
+        }); //setNameToTicker(state => ({...state, [data[i].company_name]:  data[i].ticker}))
+
+        nameToTicker[data[i].company_name] = data[i].ticker;
+      }
+
+      setStockInit(true); //stockSocket.disconnect()
+
+      exchangeSocket.emit('EXCHANGES', function (data) {});
+    });
+    exchangeSocket.on('EXCHANGES', function (data) {
+      Object.keys(data).map(function (exchange_) {
+        var nStocks = 0;
+
+        for (var i = 0; i < data[exchange_].listed_companies.length; i++) {
+          nStocks++;
+          setTickerToExchange(function (state) {
+            return _objectSpread({}, state, _defineProperty({}, nameToTicker[data[exchange_].listed_companies[i]], exchange_));
+          });
+        }
+
+        var init_data = {
+          buyVolume: 0,
+          sellVolume: 0,
+          nStocks: nStocks
+        };
+        setExchange(function (state) {
+          return _objectSpread({}, state, _defineProperty({}, exchange_, init_data));
+        });
+      });
+      setTotalVolume(function () {
+        return 0;
+      });
+      setExchangeInit(true); //exchangeSocket.disconnect()
+    });
+  }, []);
+  (0, _react.useEffect)(function () {
     socket.on('UPDATE', function (current) {
+      console.log('******');
       var data = {
         time: current.time,
         value: current.value
@@ -94588,45 +94713,165 @@ var App = function App(_ref) {
         return _objectSpread({}, state, _defineProperty({}, current.ticker, [].concat(_toConsumableArray(state[current.ticker] || []), [data])));
       });
     });
-    socket.emit('STOCKS', function () {});
-    socket.on('STOCKS', function (data) {
-      // agrego las empresas a StockCompanies  
-      for (var i = 0; i < data.length; i++) {
-        setstockCompanies(function (currentData) {
-          return [].concat(_toConsumableArray(currentData), [data[i]]);
-        });
-      }
+  }, [stockInit, exchangeInit]);
+  (0, _react.useEffect)(function () {
+    socket.on('BUY', function (current) {
+      setBuy(function (state) {
+        return _objectSpread({}, state, _defineProperty({}, current.ticker, [].concat(_toConsumableArray(state[current.ticker] || []), [current])));
+      });
     });
-  }, []); // 2. render the line chart using the state
+  }, []);
+  (0, _react.useEffect)(function () {
+    socket.on('SELL', function (current) {
+      setSell(function (state) {
+        return _objectSpread({}, state, _defineProperty({}, current.ticker, [].concat(_toConsumableArray(state[current.ticker] || []), [current])));
+      });
+    });
+  }, []);
+  (0, _react.useEffect)(function () {
+    if (stock && exchange) {
+      console.log('  -  -  -  -  - BUY -  -  -  -  -  ');
+      var volume_ = {};
+      var i = 0;
+      var keys = Object.keys(buy); //console.log(exchange)
 
-  return _react.default.createElement("div", null, _react.default.createElement("ul", {
-    className: "nav-ul"
-  }, _react.default.createElement("li", {
-    className: "nav-li"
-  }, " ", _react.default.createElement(_disconnect.default, {
-    disconnect: function disconnect() {
-      setdisconnect(socket.disconnect());
+      for (i = 0; i < keys.length; i++) {
+        if (exchange[tickerToExchange[keys[i]]]) {
+          console.log('  ');
+          console.log('  modify', tickerToExchange[keys[i]]);
+          var n = 0;
+          var addBuy = 0; //console.log('     ',buy[keys[i]].length, buy[keys[i]])
+
+          for (n = 0; n < buy[keys[i]].length; n++) {
+            addBuy += buy[keys[i]][n].volume;
+            console.log('    sum', addBuy);
+
+            if (volume_[tickerToExchange[keys[i]]]) {
+              //console.log('      inside if')
+              volume_[tickerToExchange[keys[i]]] = {
+                buyVolume: addBuy + exchange[tickerToExchange[keys[i]]].buyVolume,
+                sellVolume: exchange[tickerToExchange[keys[i]]].sellVolume,
+                nStocks: exchange[tickerToExchange[keys[i]]].nStocks
+              };
+            } else {
+              //console.log('      inside else')
+              volume_[tickerToExchange[keys[i]]] = {
+                buyVolume: addBuy,
+                sellVolume: exchange[tickerToExchange[keys[i]]].sellVolume,
+                nStocks: exchange[tickerToExchange[keys[i]]].nStocks
+              };
+            }
+
+            console.log('        new volume', volume_);
+            console.log('  ');
+          }
+        }
+      }
+
+      console.log('volume:', volume_);
+      console.log('exchange', exchange);
+      console.log('  ');
+      setExchange(function () {
+        return volume_;
+      });
     }
-  })), _react.default.createElement("li", {
-    className: "nav-li"
-  }, " ", _react.default.createElement(_connect.default, {
-    connect: function connect() {
-      setconnect(socket.connect());
+  }, [buy]);
+  (0, _react.useEffect)(function () {
+    if (stock && exchange) {
+      console.log('  -  -  -  -  - SELL -  -  -  -  -  ');
+      var volume_ = {};
+      var i = 0;
+      var keys = Object.keys(buy); //console.log(exchange)
+
+      for (i = 0; i < keys.length; i++) {
+        if (exchange[tickerToExchange[keys[i]]]) {
+          var n = 0;
+          var addSell = 0;
+
+          for (n = 0; n < buy[keys[i]].length; n++) {
+            addSell += buy[keys[i]][n].volume;
+
+            if (volume_[tickerToExchange[keys[i]]]) {
+              volume_[tickerToExchange[keys[i]]] = {
+                buyVolume: exchange[tickerToExchange[keys[i]]].buyVolume,
+                sellVolume: addSell + exchange[tickerToExchange[keys[i]]].sellVolume,
+                nStocks: exchange[tickerToExchange[keys[i]]].nStocks
+              };
+            } else {
+              volume_[tickerToExchange[keys[i]]] = {
+                buyVolume: exchange[tickerToExchange[keys[i]]].buyVolume,
+                sellVolume: addSell,
+                nStocks: exchange[tickerToExchange[keys[i]]].nStocks
+              };
+            }
+          }
+        }
+      }
+
+      setExchange(function () {
+        return volume_;
+      });
     }
-  }))), stockCompanies.map(function (company) {
-    return _react.default.createElement("div", {
-      className: "chart"
-    }, _react.default.createElement("h1", {
-      className: "title"
-    }, " ", company.ticker, " "), _react.default.createElement("div", null, _react.default.createElement(_ChartStock.default, {
-      key: company.ticker,
-      data: stock[company.ticker]
-    })));
-  }));
+  }, [sell]);
+
+  if (exchange) {
+    return _react.default.createElement("div", null, _react.default.createElement("ul", {
+      className: "nav-ul"
+    }, _react.default.createElement("li", {
+      className: "nav-li"
+    }, " ", _react.default.createElement(_disconnect.default, {
+      disconnect: function disconnect() {
+        setdisconnect(socket.disconnect());
+      }
+    })), _react.default.createElement("li", {
+      className: "nav-li"
+    }, " ", _react.default.createElement(_connect.default, {
+      connect: function connect() {
+        setconnect(socket.connect());
+      }
+    }))), _react.default.createElement(_Exchange.default, {
+      exchange: exchange,
+      totalVolume: totalVolume
+    }), stockCompanies.map(function (company) {
+      return _react.default.createElement("div", {
+        className: "chart"
+      }, _react.default.createElement("h1", {
+        className: "title"
+      }, " ", company.ticker, " "), _react.default.createElement("div", null, _react.default.createElement(_ChartStock.default, {
+        key: company.ticker,
+        data: stock[company.ticker]
+      })));
+    }));
+  } else {
+    return _react.default.createElement("div", null, _react.default.createElement("ul", {
+      className: "nav-ul"
+    }, _react.default.createElement("li", {
+      className: "nav-li"
+    }, " ", _react.default.createElement(_disconnect.default, {
+      disconnect: function disconnect() {
+        setdisconnect(socket.disconnect());
+      }
+    })), _react.default.createElement("li", {
+      className: "nav-li"
+    }, " ", _react.default.createElement(_connect.default, {
+      connect: function connect() {
+        setconnect(socket.connect());
+      }
+    }))), stockCompanies.map(function (company) {
+      return _react.default.createElement("div", {
+        className: "chart"
+      }, _react.default.createElement("h1", {
+        className: "title"
+      }, " ", company.ticker, " "), _react.default.createElement("div", null, _react.default.createElement(_ChartStock.default, {
+        key: company.ticker,
+        data: stock[company.ticker]
+      })));
+    }));
+  }
 };
 
 _reactDom.default.render(_react.default.createElement(App, null), document.getElementById('root'));
-},{"socket.io-client":"../node_modules/socket.io-client/lib/index.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","./css/navbar.css":"css/navbar.css","./components/disconnect":"components/disconnect.js","./components/connect":"components/connect.js","./components/ChartStock":"components/ChartStock.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"socket.io-client":"../node_modules/socket.io-client/lib/index.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","./css/navbar.css":"css/navbar.css","./components/disconnect":"components/disconnect.js","./components/connect":"components/connect.js","./components/Exchange":"components/Exchange.js","./components/ChartStock":"components/ChartStock.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -94654,7 +94899,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "41139" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "38221" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
