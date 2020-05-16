@@ -9,7 +9,8 @@ import {
   LineChart,
   XAxis,
   YAxis,
-  Tooltip
+  Tooltip,
+  CartesianGrid
 } from 'recharts';
 
 
@@ -18,6 +19,7 @@ export default function ChartStock(props) {
   const [dataUpdate, setDataUpdate] = useState([]);
 
   
+
   const data = props.data;
 
  var ticker = 'NaN'
@@ -28,12 +30,12 @@ export default function ChartStock(props) {
   // 2. render the line chart using the state
   return (
     <div>
-      <LineChart width={500} height={300} data={data}>
-        <XAxis dataKey="tima" />
-        <YAxis  label={{ value:"Value", angle: -90, position:"insideLeft" }}/>
+      <LineChart width={450} height={300} data={data}>
+        <XAxis dataKey="time"  stroke="#7c795d" label={{ value:"Tiempo", maeginTop:"100px" ,angle: -90, position:"insideBottom" }}/>
+        <YAxis  stroke="#7c795d" label={{ value:"Valor", angle: -90 }}/>
         <Tooltip/>
-
-        <Line time="monotone" dataKey="value" stroke="#999" activeDot={{r: 8}} />
+        <CartesianGrid  stroke="#7c795d " strokeDasharray="5 5"/>
+        <Line time="monotone" dataKey="value" stroke="#4CAF50" activeDot={{r: 8}} />
       </LineChart>
 
     </div>

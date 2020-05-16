@@ -40909,10 +40909,10 @@ function (_Component) {
   _createClass(Disconnect, [{
     key: "render",
     value: function render() {
-      return _react.default.createElement("div", null, _react.default.createElement("button", {
+      return _react.default.createElement("button", {
         type: "button",
         onClick: this.props.disconnect
-      }, " Disconnect"));
+      }, " Disconnect");
     }
   }]);
 
@@ -40968,10 +40968,10 @@ function (_Component) {
   _createClass(Connect, [{
     key: "render",
     value: function render() {
-      return _react.default.createElement("div", null, _react.default.createElement("button", {
+      return _react.default.createElement("button", {
         type: "button",
         onClick: this.props.connect
-      }, "Connect"));
+      }, "Connect");
     }
   }]);
 
@@ -41002,27 +41002,309 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function Exchange(props) {
-  var exchange = props.exchange;
-  var totalVolume = 1;
-  var keys = Object.keys(exchange);
+  var buy = props.buy;
+  var sell = props.sell;
+  var tickerToExchange = props.tickerToExchange;
+  var exchange_ = props.exchange;
+  var nStocks = {};
+  var dictBuy = {};
+  var dictSell = {};
+  var totalVolume = 0;
+  var keys1 = Object.keys(buy);
+  var keys2 = Object.keys(sell);
+  var keys = keys2.filter(function (obj) {
+    return keys1.indexOf(obj) != -1;
+  });
+  var u = 0;
+
+  for (u = 0; u < keys.length; u++) {
+    var ticker = keys[u];
+    var exchange = tickerToExchange[ticker]; // check nStock
+
+    if (!nStocks[exchange]) {
+      nStocks[exchange] = 1;
+    } // BUY 
+
+
+    if (dictBuy[exchange]) {
+      try {
+        dictBuy[exchange] += buy[ticker].reduce(function (acc, val) {
+          return acc + val;
+        }, 0);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      try {
+        dictBuy[exchange] = buy[ticker].reduce(function (acc, val) {
+          return acc + val;
+        }, 0);
+      } catch (error) {
+        console.error(error);
+      }
+    } // SELL 
+
+
+    if (dictSell[exchange]) {
+      try {
+        dictSell[exchange] += sell[ticker].reduce(function (acc, val) {
+          return acc + val;
+        }, 0);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      try {
+        dictSell[exchange] = sell[ticker].reduce(function (acc, val) {
+          return acc + val;
+        }, 0);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
   var i = 0;
 
-  for (i = 0; i < keys.length; i++) {
-    totalVolume = exchange[keys[i]].buyVolume + exchange[keys[i]].sellVolume + totalVolume;
+  for (i = 0; i < Object.keys(dictBuy).length; i++) {
+    var exchange = Object.keys(dictBuy)[i];
+    totalVolume += dictBuy[exchange] + dictSell[exchange];
+
+    if (exchange_[exchange]) {
+      nStocks[exchange] = exchange_[exchange].nStocks;
+    } else {
+      nStocks[exchange] = 2;
+    }
   } // 2. render the line chart using the state
 
 
-  return _react.default.createElement("table", {
+  return _react.default.createElement("div", null, _react.default.createElement("h1", null, " Exchanges Information"), _react.default.createElement("table", {
     className: "table"
   }, _react.default.createElement("thead", null, _react.default.createElement("tr", {
     className: "table"
-  }, _react.default.createElement("th", null, " Exchange "), _react.default.createElement("th", null, " BUY Volume  "), _react.default.createElement("th", null, " SELL Volume "), _react.default.createElement("th", null, " Total Volume "), _react.default.createElement("th", null, " N Stocks "), _react.default.createElement("th", null, " Participation "))), _react.default.createElement("thead", null, Object.keys(exchange).map(function (ticker) {
-    return _react.default.createElement("tr", null, _react.default.createElement("td", null, " ", ticker, " "), _react.default.createElement("td", null, " ", exchange[ticker].buyVolume.toLocaleString(), " "), _react.default.createElement("td", null, " ", exchange[ticker].sellVolume.toLocaleString(), " "), _react.default.createElement("td", null, " ", (exchange[ticker].buyVolume + exchange[ticker].sellVolume).toLocaleString(), " "), _react.default.createElement("td", null, " ", exchange[ticker].nStocks.toLocaleString(), " "), _react.default.createElement("td", null, " ", parseFloat((exchange[ticker].buyVolume + exchange[ticker].sellVolume) * 100 / totalVolume).toFixed(2) + "%", " "));
-  })));
+  }, _react.default.createElement("th", null, " Exchange "), _react.default.createElement("th", null, " BUY Volume  "), _react.default.createElement("th", null, " SELL Volume "), _react.default.createElement("th", null, " Total Volume "), _react.default.createElement("th", null, " N Stocks "), _react.default.createElement("th", null, " Participation "))), _react.default.createElement("thead", null, Object.keys(dictBuy).map(function (exchange) {
+    return _react.default.createElement("tr", null, _react.default.createElement("td", null, " ", exchange, " "), _react.default.createElement("td", null, " ", dictBuy[exchange].toLocaleString(), " "), _react.default.createElement("td", null, " ", dictSell[exchange].toLocaleString(), " "), _react.default.createElement("td", null, " ", (dictBuy[exchange] + dictSell[exchange]).toLocaleString(), " "), _react.default.createElement("td", null, " ", nStocks[exchange].toLocaleString(), " "), _react.default.createElement("td", null, " ", parseFloat((dictBuy[exchange] + dictSell[exchange]) * 100 / totalVolume).toFixed(4) + "%", " "));
+  }))));
 }
 
 ;
-},{"socket.io-client":"../node_modules/socket.io-client/lib/index.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js"}],"../node_modules/recharts/node_modules/core-js/internals/global.js":[function(require,module,exports) {
+/*
+
+export default function Exchange(props) {
+  
+  const exchange = props.exchange;
+  var totalVolume = 1;
+
+  const keys = Object.keys(exchange);
+
+  var i = 0;
+  for (i=0; i < keys.length; i++){
+    totalVolume = exchange[keys[i]].buyVolume + exchange[keys[i]].sellVolume + totalVolume
+  }
+
+  // 2. render the line chart using the state
+  return (
+
+    <table className="table"> 
+    <thead>
+      <tr className="table">
+          <th> Exchange </th>
+          <th> BUY Volume  </th>
+          <th> SELL Volume </th>
+          <th> Total Volume </th>
+          <th> N Stocks </th>
+          <th> Participation </th>
+      </tr>
+      </thead>
+      <thead>
+
+      {Object.keys(exchange).map((ticker) => (
+        <tr>
+            <td> {ticker} </td>
+            <td> {exchange[ticker].buyVolume.toLocaleString()} </td>
+            <td> {exchange[ticker].sellVolume.toLocaleString()} </td>
+            <td> {(exchange[ticker].buyVolume + exchange[ticker].sellVolume).toLocaleString()} </td>
+            <td> {exchange[ticker].nStocks.toLocaleString()} </td>
+            <td> {parseFloat((exchange[ticker].buyVolume + exchange[ticker].sellVolume) * 100 / totalVolume).toFixed(2)+"%" } </td>
+        
+            </tr>
+        ))
+        }
+        </thead>
+     
+      </table>
+  );
+};
+
+*/
+},{"socket.io-client":"../node_modules/socket.io-client/lib/index.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js"}],"components/Stock.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = Stock;
+
+var _react = _interopRequireDefault(require("react"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function Stock(props) {
+  var value = props.value;
+  var buy = props.buy;
+  var sell = props.sell;
+  var tickerToCountry = props.tickerToCountry;
+  var tickerToName = props.tickerToName;
+  var tickerToExchange = tickerToExchange;
+  var name = {};
+  var countries = {};
+  var dictBuy = {};
+  var dictSell = {};
+  var keys1 = Object.keys(buy);
+  var keys2 = Object.keys(sell);
+  var keys = keys2.filter(function (obj) {
+    return keys1.indexOf(obj) != -1;
+  });
+  var u = 0;
+
+  for (u = 0; u < keys.length; u++) {
+    var ticker = keys[u];
+
+    if (tickerToName[ticker]) {
+      name[ticker] = tickerToName[ticker];
+    } else {
+      name[ticker] = ':)';
+    }
+
+    if (tickerToCountry[ticker]) {
+      countries[ticker] = tickerToCountry[ticker];
+    } else {
+      countries[ticker] = ':)';
+    } // BUY 
+
+
+    if (dictBuy[ticker]) {
+      try {
+        dictBuy[ticker] += buy[ticker].reduce(function (acc, val) {
+          return acc + val;
+        }, 0);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      try {
+        dictBuy[ticker] = buy[ticker].reduce(function (acc, val) {
+          return acc + val;
+        }, 0);
+      } catch (error) {
+        console.error(error);
+      }
+    } // SELL 
+
+
+    if (dictSell[ticker]) {
+      try {
+        dictSell[ticker] += sell[ticker].reduce(function (acc, val) {
+          return acc + val;
+        }, 0);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      try {
+        dictSell[ticker] = sell[ticker].reduce(function (acc, val) {
+          return acc + val;
+        }, 0);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
+  var delta = {};
+  var lastValue = {};
+  keys = Object.keys(value);
+  var i = 0; //console.log(value);
+
+  for (i = 0; i < keys.length; i++) {
+    //console.log('    ', keys[i], value[keys[i]]);
+    if (value[keys[i]].length > 2) {
+      var x = 0;
+
+      for (x = 0; x < value[keys[i]].length - 3; x++) {
+        delta[keys[i]] = (value[keys[i]][value[keys[i]].length - 2 - x] - value[keys[i]][value[keys[i]].length - 1]) / value[keys[i]][value[keys[i]].length - 2 - x];
+
+        if (delta[keys[i]] != 0) {
+          break;
+        }
+      }
+
+      lastValue[keys[i]] = value[keys[i]][value[keys[i]].length - 1]; //console.log(delta)
+    } else if (value[keys[i]].length > 1) {
+      delta[keys[i]] = 0;
+      lastValue[keys[i]] = value[keys[i]][value[keys[i]].length - 1];
+    } else {
+      delta[keys[i]] = 0;
+      lastValue[keys[i]] = 0;
+    }
+  } // 2. render the line chart using the state
+  // </tr>/{buyVolume[ticker].reduce(function(acc, val) { return acc + val; }, 0).toLocaleString()} </td>
+
+
+  return _react.default.createElement("div", null, _react.default.createElement("h1", null, " Stocks Information "), _react.default.createElement("table", {
+    className: "table"
+  }, _react.default.createElement("thead", null, _react.default.createElement("tr", {
+    className: "table"
+  }, _react.default.createElement("th", null, " Name "), _react.default.createElement("th", null, " Country "), _react.default.createElement("th", null, " Ticker "), _react.default.createElement("th", null, " Total Volume  "), _react.default.createElement("th", null, " Historical HIGH  "), _react.default.createElement("th", null, " Historical LOW "), _react.default.createElement("th", null, " Last Price "), _react.default.createElement("th", null, " Delta Price (with the last different) "))), _react.default.createElement("thead", null, keys.map(function (ticker) {
+    return _react.default.createElement("tr", null, _react.default.createElement("td", null, " ", name[ticker], " "), _react.default.createElement("td", null, " ", countries[ticker], " "), _react.default.createElement("td", null, " ", ticker, " "), _react.default.createElement("td", null, " ", (dictSell[ticker] + dictSell[ticker]).toLocaleString(), " "), _react.default.createElement("td", null, " ", Math.max.apply(Math, _toConsumableArray(value[ticker])).toLocaleString(), " "), _react.default.createElement("td", null, " ", Math.min.apply(Math, _toConsumableArray(value[ticker])).toLocaleString(), " "), _react.default.createElement("td", null, " ", lastValue[ticker], " "), _react.default.createElement("td", null, " ", parseFloat(delta[ticker] * 100).toFixed(4) + "%", " "));
+  }))));
+}
+
+;
+/*
+const buyVolume = props.volumeBuyByStock;
+
+const keys = Object.keys(buyVolume);
+ // 2. render the line chart using the state
+return (
+   <table className="table"> 
+  <thead>
+    <tr className="table">
+        <th> Ticker </th>
+        <th> Total Volume  </th>
+        <th> Historical HIGH  </th>
+        <th> Historical LOW </th>
+        <th> Last Price </th>
+        <th> Delta Price </th>
+    </tr>
+    </thead>
+    <thead>
+     {keys.map((ticker) => (
+      <tr>
+          <td> {ticker} </td>
+          <td> {buyVolume[ticker].reduce(function(acc, val) { return acc + val; }, 0).toLocaleString()} </td>
+          <td> {Math.max(...buyVolume[ticker]).toLocaleString()} </td>
+          <td> {Math.min(...buyVolume[ticker]).toLocaleString()} </td>
+          <td> {1000} </td>
+          <td> {1000} </td>
+     </tr>
+      ))
+      }
+      </thead>
+   
+    </table>
+);
+};
+*/
+},{"react":"../node_modules/react/index.js"}],"../node_modules/recharts/node_modules/core-js/internals/global.js":[function(require,module,exports) {
 var global = arguments[3];
 var check = function (it) {
   return it && it.Math == Math && it;
@@ -94510,21 +94792,31 @@ function ChartStock(props) {
 
 
   return _react.default.createElement("div", null, _react.default.createElement(_recharts.LineChart, {
-    width: 500,
+    width: 450,
     height: 300,
     data: data
   }, _react.default.createElement(_recharts.XAxis, {
-    dataKey: "tima"
-  }), _react.default.createElement(_recharts.YAxis, {
+    dataKey: "time",
+    stroke: "#7c795d",
     label: {
-      value: "Value",
+      value: "Tiempo",
+      maeginTop: "100px",
       angle: -90,
-      position: "insideLeft"
+      position: "insideBottom"
     }
-  }), _react.default.createElement(_recharts.Tooltip, null), _react.default.createElement(_recharts.Line, {
+  }), _react.default.createElement(_recharts.YAxis, {
+    stroke: "#7c795d",
+    label: {
+      value: "Valor",
+      angle: -90
+    }
+  }), _react.default.createElement(_recharts.Tooltip, null), _react.default.createElement(_recharts.CartesianGrid, {
+    stroke: "#7c795d ",
+    strokeDasharray: "5 5"
+  }), _react.default.createElement(_recharts.Line, {
     time: "monotone",
     dataKey: "value",
-    stroke: "#999",
+    stroke: "#4CAF50",
     activeDot: {
       r: 8
     }
@@ -94548,6 +94840,8 @@ var _disconnect = _interopRequireDefault(require("./components/disconnect"));
 var _connect = _interopRequireDefault(require("./components/connect"));
 
 var _Exchange = _interopRequireDefault(require("./components/Exchange"));
+
+var _Stock = _interopRequireDefault(require("./components/Stock"));
 
 var _ChartStock = _interopRequireDefault(require("./components/ChartStock"));
 
@@ -94587,12 +94881,6 @@ var ruta = "/stocks";
 var socket = (0, _socket.default)(protocolo + servidor, {
   path: ruta
 });
-var exchangeSocket = (0, _socket.default)(protocolo + servidor, {
-  path: ruta
-});
-var stockSocket = (0, _socket.default)(protocolo + servidor, {
-  path: ruta
-});
 
 var App = function App(_ref) {
   _objectDestructuringEmpty(_ref);
@@ -94607,35 +94895,35 @@ var App = function App(_ref) {
       stock = _useState4[0],
       setstock = _useState4[1];
 
-  var _useState5 = (0, _react.useState)(false),
+  var _useState5 = (0, _react.useState)({}),
       _useState6 = _slicedToArray(_useState5, 2),
-      stockInit = _useState6[0],
-      setStockInit = _useState6[1];
+      value = _useState6[0],
+      setvalue = _useState6[1];
 
-  var _useState7 = (0, _react.useState)(false),
+  var _useState7 = (0, _react.useState)({}),
       _useState8 = _slicedToArray(_useState7, 2),
-      exchangeInit = _useState8[0],
-      setExchangeInit = _useState8[1];
+      tickerToName = _useState8[0],
+      setTickerToName = _useState8[1];
 
-  var _useState9 = (0, _react.useState)(0),
+  var _useState9 = (0, _react.useState)({}),
       _useState10 = _slicedToArray(_useState9, 2),
-      newBuy = _useState10[0],
-      setnewBuy = _useState10[1];
+      tickerToCountry = _useState10[0],
+      setTickerToCountry = _useState10[1];
 
-  var _useState11 = (0, _react.useState)(),
+  var _useState11 = (0, _react.useState)({}),
       _useState12 = _slicedToArray(_useState11, 2),
-      disconnect = _useState12[0],
-      setdisconnect = _useState12[1];
+      exchange = _useState12[0],
+      setExchange = _useState12[1];
 
   var _useState13 = (0, _react.useState)(),
       _useState14 = _slicedToArray(_useState13, 2),
-      connect = _useState14[0],
-      setconnect = _useState14[1];
+      disconnect = _useState14[0],
+      setdisconnect = _useState14[1];
 
-  var _useState15 = (0, _react.useState)({}),
+  var _useState15 = (0, _react.useState)(),
       _useState16 = _slicedToArray(_useState15, 2),
-      exchange = _useState16[0],
-      setExchange = _useState16[1];
+      connect = _useState16[0],
+      setconnect = _useState16[1];
 
   var _useState17 = (0, _react.useState)({}),
       _useState18 = _slicedToArray(_useState17, 2),
@@ -94647,36 +94935,32 @@ var App = function App(_ref) {
       sell = _useState20[0],
       setSell = _useState20[1];
 
-  var _useState21 = (0, _react.useState)(0.00001),
+  var _useState21 = (0, _react.useState)({}),
       _useState22 = _slicedToArray(_useState21, 2),
-      totalVolume = _useState22[0],
-      setTotalVolume = _useState22[1]; //const [nameToTicker, setNameToTicker] = useState({});
-
-
-  var _useState23 = (0, _react.useState)({}),
-      _useState24 = _slicedToArray(_useState23, 2),
-      tickerToExchange = _useState24[0],
-      setTickerToExchange = _useState24[1];
+      tickerToExchange = _useState22[0],
+      setTickerToExchange = _useState22[1];
 
   (0, _react.useEffect)(function () {
     var nameToTicker = {};
-    stockSocket.emit('STOCKS', function () {});
-    stockSocket.on('STOCKS', function (data) {
-      console.log('---------'); // agrego las empresas a StockCompanies  
-
+    socket.emit('STOCKS', function () {});
+    socket.on('STOCKS', function (data) {
+      // agrego las empresas a StockCompanies  
       for (var i = 0; i < data.length; i++) {
         setstockCompanies(function (currentData) {
           return [].concat(_toConsumableArray(currentData), [data[i]]);
-        }); //setNameToTicker(state => ({...state, [data[i].company_name]:  data[i].ticker}))
-
+        });
         nameToTicker[data[i].company_name] = data[i].ticker;
+        setTickerToName(function (state) {
+          return _objectSpread({}, state, _defineProperty({}, data[i].ticker, data[i].company_name));
+        });
+        setTickerToCountry(function (state) {
+          return _objectSpread({}, state, _defineProperty({}, data[i].ticker, data[i].country));
+        });
       }
 
-      setStockInit(true); //stockSocket.disconnect()
-
-      exchangeSocket.emit('EXCHANGES', function (data) {});
+      socket.emit('EXCHANGES', function (data) {});
     });
-    exchangeSocket.on('EXCHANGES', function (data) {
+    socket.on('EXCHANGES', function (data) {
       Object.keys(data).map(function (exchange_) {
         var nStocks = 0;
 
@@ -94690,188 +94974,85 @@ var App = function App(_ref) {
         var init_data = {
           buyVolume: 0,
           sellVolume: 0,
-          nStocks: nStocks
+          nStocks: nStocks,
+          country: data[exchange_].country
         };
         setExchange(function (state) {
           return _objectSpread({}, state, _defineProperty({}, exchange_, init_data));
         });
-      });
-      setTotalVolume(function () {
-        return 0;
-      });
-      setExchangeInit(true); //exchangeSocket.disconnect()
+      }); //setExchangeInit(true)
     });
   }, []);
   (0, _react.useEffect)(function () {
     socket.on('UPDATE', function (current) {
-      console.log('******');
-      var data = {
-        time: current.time,
+      var chart = {
+        time: new Date(current.time).toISOString().substr(11, 5),
+        //.getHours() + ':' + new Date(current.time).toISOString().getMinutes(),
         value: current.value
       };
       setstock(function (state) {
-        return _objectSpread({}, state, _defineProperty({}, current.ticker, [].concat(_toConsumableArray(state[current.ticker] || []), [data])));
+        return _objectSpread({}, state, _defineProperty({}, current.ticker, [].concat(_toConsumableArray(state[current.ticker] || []), [chart])));
+      });
+      setvalue(function (state) {
+        return _objectSpread({}, state, _defineProperty({}, current.ticker, [].concat(_toConsumableArray(state[current.ticker] || []), [chart.value])));
       });
     });
-  }, [stockInit, exchangeInit]);
+  }, []);
   (0, _react.useEffect)(function () {
     socket.on('BUY', function (current) {
       setBuy(function (state) {
-        return _objectSpread({}, state, _defineProperty({}, current.ticker, [].concat(_toConsumableArray(state[current.ticker] || []), [current])));
+        return _objectSpread({}, state, _defineProperty({}, current.ticker, [].concat(_toConsumableArray(state[current.ticker] || []), [current.volume])));
       });
     });
   }, []);
   (0, _react.useEffect)(function () {
     socket.on('SELL', function (current) {
       setSell(function (state) {
-        return _objectSpread({}, state, _defineProperty({}, current.ticker, [].concat(_toConsumableArray(state[current.ticker] || []), [current])));
+        return _objectSpread({}, state, _defineProperty({}, current.ticker, [].concat(_toConsumableArray(state[current.ticker] || []), [current.volume])));
       });
     });
   }, []);
-  (0, _react.useEffect)(function () {
-    if (stock && exchange) {
-      console.log('  -  -  -  -  - BUY -  -  -  -  -  ');
-      var volume_ = {};
-      var i = 0;
-      var keys = Object.keys(buy); //console.log(exchange)
-
-      for (i = 0; i < keys.length; i++) {
-        if (exchange[tickerToExchange[keys[i]]]) {
-          console.log('  ');
-          console.log('  modify', tickerToExchange[keys[i]]);
-          var n = 0;
-          var addBuy = 0; //console.log('     ',buy[keys[i]].length, buy[keys[i]])
-
-          for (n = 0; n < buy[keys[i]].length; n++) {
-            addBuy += buy[keys[i]][n].volume;
-            console.log('    sum', addBuy);
-
-            if (volume_[tickerToExchange[keys[i]]]) {
-              //console.log('      inside if')
-              volume_[tickerToExchange[keys[i]]] = {
-                buyVolume: addBuy + exchange[tickerToExchange[keys[i]]].buyVolume,
-                sellVolume: exchange[tickerToExchange[keys[i]]].sellVolume,
-                nStocks: exchange[tickerToExchange[keys[i]]].nStocks
-              };
-            } else {
-              //console.log('      inside else')
-              volume_[tickerToExchange[keys[i]]] = {
-                buyVolume: addBuy,
-                sellVolume: exchange[tickerToExchange[keys[i]]].sellVolume,
-                nStocks: exchange[tickerToExchange[keys[i]]].nStocks
-              };
-            }
-
-            console.log('        new volume', volume_);
-            console.log('  ');
-          }
-        }
-      }
-
-      console.log('volume:', volume_);
-      console.log('exchange', exchange);
-      console.log('  ');
-      setExchange(function () {
-        return volume_;
-      });
+  return _react.default.createElement("div", null, _react.default.createElement("ul", {
+    className: "nav-ul"
+  }, _react.default.createElement("li", {
+    className: "nav-li"
+  }, " ", _react.default.createElement(_disconnect.default, {
+    disconnect: function disconnect() {
+      setdisconnect(socket.disconnect());
     }
-  }, [buy]);
-  (0, _react.useEffect)(function () {
-    if (stock && exchange) {
-      console.log('  -  -  -  -  - SELL -  -  -  -  -  ');
-      var volume_ = {};
-      var i = 0;
-      var keys = Object.keys(buy); //console.log(exchange)
-
-      for (i = 0; i < keys.length; i++) {
-        if (exchange[tickerToExchange[keys[i]]]) {
-          var n = 0;
-          var addSell = 0;
-
-          for (n = 0; n < buy[keys[i]].length; n++) {
-            addSell += buy[keys[i]][n].volume;
-
-            if (volume_[tickerToExchange[keys[i]]]) {
-              volume_[tickerToExchange[keys[i]]] = {
-                buyVolume: exchange[tickerToExchange[keys[i]]].buyVolume,
-                sellVolume: addSell + exchange[tickerToExchange[keys[i]]].sellVolume,
-                nStocks: exchange[tickerToExchange[keys[i]]].nStocks
-              };
-            } else {
-              volume_[tickerToExchange[keys[i]]] = {
-                buyVolume: exchange[tickerToExchange[keys[i]]].buyVolume,
-                sellVolume: addSell,
-                nStocks: exchange[tickerToExchange[keys[i]]].nStocks
-              };
-            }
-          }
-        }
-      }
-
-      setExchange(function () {
-        return volume_;
-      });
+  })), _react.default.createElement("li", {
+    className: "nav-li"
+  }, " ", _react.default.createElement(_connect.default, {
+    connect: function connect() {
+      setconnect(socket.connect());
     }
-  }, [sell]);
-
-  if (exchange) {
-    return _react.default.createElement("div", null, _react.default.createElement("ul", {
-      className: "nav-ul"
-    }, _react.default.createElement("li", {
-      className: "nav-li"
-    }, " ", _react.default.createElement(_disconnect.default, {
-      disconnect: function disconnect() {
-        setdisconnect(socket.disconnect());
-      }
-    })), _react.default.createElement("li", {
-      className: "nav-li"
-    }, " ", _react.default.createElement(_connect.default, {
-      connect: function connect() {
-        setconnect(socket.connect());
-      }
-    }))), _react.default.createElement(_Exchange.default, {
-      exchange: exchange,
-      totalVolume: totalVolume
-    }), stockCompanies.map(function (company) {
-      return _react.default.createElement("div", {
-        className: "chart"
-      }, _react.default.createElement("h1", {
-        className: "title"
-      }, " ", company.ticker, " "), _react.default.createElement("div", null, _react.default.createElement(_ChartStock.default, {
-        key: company.ticker,
-        data: stock[company.ticker]
-      })));
-    }));
-  } else {
-    return _react.default.createElement("div", null, _react.default.createElement("ul", {
-      className: "nav-ul"
-    }, _react.default.createElement("li", {
-      className: "nav-li"
-    }, " ", _react.default.createElement(_disconnect.default, {
-      disconnect: function disconnect() {
-        setdisconnect(socket.disconnect());
-      }
-    })), _react.default.createElement("li", {
-      className: "nav-li"
-    }, " ", _react.default.createElement(_connect.default, {
-      connect: function connect() {
-        setconnect(socket.connect());
-      }
-    }))), stockCompanies.map(function (company) {
-      return _react.default.createElement("div", {
-        className: "chart"
-      }, _react.default.createElement("h1", {
-        className: "title"
-      }, " ", company.ticker, " "), _react.default.createElement("div", null, _react.default.createElement(_ChartStock.default, {
-        key: company.ticker,
-        data: stock[company.ticker]
-      })));
-    }));
-  }
+  }))), _react.default.createElement(_Exchange.default, {
+    buy: buy,
+    sell: sell,
+    exchange: exchange,
+    tickerToExchange: tickerToExchange
+  }), _react.default.createElement(_Stock.default, {
+    tickerToCountry: tickerToCountry,
+    tickerToName: tickerToName,
+    buy: buy,
+    sell: sell,
+    value: value,
+    exchange: exchange,
+    tickerToExchange: tickerToExchange
+  }), _react.default.createElement("div", {
+    className: "chartSpace"
+  }, stockCompanies.map(function (company) {
+    return _react.default.createElement("div", {
+      className: "chart"
+    }, _react.default.createElement("h2", null, " ", company.ticker, " "), _react.default.createElement("div", null, _react.default.createElement(_ChartStock.default, {
+      key: company.ticker,
+      data: stock[company.ticker]
+    })));
+  })));
 };
 
 _reactDom.default.render(_react.default.createElement(App, null), document.getElementById('root'));
-},{"socket.io-client":"../node_modules/socket.io-client/lib/index.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","./css/navbar.css":"css/navbar.css","./components/disconnect":"components/disconnect.js","./components/connect":"components/connect.js","./components/Exchange":"components/Exchange.js","./components/ChartStock":"components/ChartStock.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"socket.io-client":"../node_modules/socket.io-client/lib/index.js","react":"../node_modules/react/index.js","react-dom":"../node_modules/react-dom/index.js","./css/navbar.css":"css/navbar.css","./components/disconnect":"components/disconnect.js","./components/connect":"components/connect.js","./components/Exchange":"components/Exchange.js","./components/Stock":"components/Stock.js","./components/ChartStock":"components/ChartStock.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -94899,7 +95080,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "38221" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "35467" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

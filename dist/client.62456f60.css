@@ -1,40 +1,71 @@
+ 
+  h1 { color: #7c795d; 
+    font-family: 'Trocchi', serif; 
+    font-size: 45px; 
+    font-weight: normal; 
+    line-height: 48px; 
+    margin: 0; 
+    text-align: center;
+    padding: 20px;
+    margin-top: 25px;}
+
+h2 { color: #7c795d;
+   font-family: 'Source Sans Pro', sans-serif; 
+   font-size: 28px; 
+   font-weight: 400; 
+   line-height: 32px; 
+   margin: 0 0 24px; 
+   text-align: center;
+   margin-top: 50px;
+  }
+  
+
 
 .nav-ul {
+  background-color: #4CAF50;
   list-style-type: none;
   margin: 0;
-  padding: 10;
   overflow: hidden;
-  background-color: #333;
 }
 
-.nav-li {
+.nav-li { 
   float: right;
-  padding-left: 20px;
+  margin-right: 30px;
 }
 
 .nav-li button {
-  display: block;
+  border-radius: 5%;
+  font-size: 28px; 
+  width: 200px;
+  height: 40px;
+  line-height:40px;
+  font-family: 'Trocchi', serif; 
   color: rgb(133, 111, 111);
   text-align: center;
-  padding: 14px 16px;
   text-decoration: none;
+  margin-right: 10%;
+  margin-top: 5%;
+  margin-bottom: 5%;
+  background-color: #f2f2f2;
 }
 
 .nav-li button:hover {
-  background-color: rgb(110, 105, 105);
-  color: white;
+  background-color: #ddd;
+    color: white;
 }
 
 
 .table {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   border-collapse: collapse;
-  width: 80%;
+  width: 90%;
+  margin-left: 5%;
+  margin-right: 5%;
   padding: 10%;
-  margin-left: 10%;
 }
 
 .table td, .table th {
+  margin-top: 5%;
   border: 1px solid #ddd;
   padding: 8px;
 }
@@ -47,7 +78,7 @@
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
-  background-color: #4CAF50;
+  background-color: #4CAF50 ;
   color: white;
 }
 
@@ -55,8 +86,14 @@
 .chart {
   display: inline-block;
   padding: 20px;
-  width: 500px;
-  height: 300px;
+  width: 450px;
+  margin-top: 50px;
+}
+
+.chartSpace{
+  margin-left: 5%;
+  margin-right: 5%;
+  width: 90%;
 }
 
 .absolute {
@@ -66,5 +103,7 @@
 .title {
   text-align: center;
 }
+
+
 
 /*# sourceMappingURL=/client.62456f60.css.map */
